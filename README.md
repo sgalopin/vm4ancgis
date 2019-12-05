@@ -31,26 +31,37 @@ Vagrant est utilisé pour instancier la machine virtuelle.
   VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant plugin install vagrant-proxyconf
   ```
 
-- Modifier le fichier **~/.vagrant.d/Vagrantfile**:
+- Créer le fichier **~/.vagrant.d/Vagrantfile** avec le contenu suivant:
   ```
-  if Vagrant.has_plugin?("vagrant-proxyconf")
-        config.proxy.http     = ENV['http_proxy'] || ""
-        config.proxy.https    = ENV['https_proxy'] || ENV['http_proxy'] || ""
-        config.proxy.no_proxy = ENV['no_proxy'] || "localhost,127.0.0.1,.dev.net"
-        config.proxy.enabled  = ENV.fetch('http_proxy', false)
-        if ENV.has_key?('http_proxy')
-          puts "Setting of the environment proxy configuration."
-          puts "http_proxy = #{config.proxy.http}"
-        else
-          puts "No environment proxy configuration found."
-        end
-    end
+  Vagrant.configure("2") do |config|
+
+    puts "Setting the local configuration."
+    if Vagrant.has_plugin?("vagrant-proxyconf")
+          config.proxy.http     = ENV['http_proxy'] || ""
+          config.proxy.https    = ENV['https_proxy'] || ENV['http_proxy'] || ""
+          config.proxy.no_proxy = ENV['no_proxy'] || "localhost,127.0.0.1,.dev.net"
+          config.proxy.enabled  = ENV.fetch('http_proxy', false)
+          if ENV.has_key?('http_proxy')
+            puts "Setting of the environment proxy configuration."
+            puts "http_proxy = #{config.proxy.http}"
+          else
+            puts "No environment proxy configuration found."
+          end
+      end
+
+  end
   ```
-  **Note**: Le répertoire **.vagrant.d** est un répertoire caché. Il peut être nécessaire d'afficher les fichiers cachés.
+  **Note**:
+  - Le répertoire **.vagrant.d** est un répertoire caché. Il peut être nécessaire d'afficher les fichiers cachés.
+  - Pour comprendre comment Vagrant utilise les Vagrantfiles, notamment concernant l'ordre de priorisation et la fusion, il peut être utile de consulter la [documentation](https://www.vagrantup.com/docs/vagrantfile/#load-order-and-merging).
+  - Le caractère '~' correspond au répertoire par défaut de l'utilisateur courant ([Home directory](https://en.wikipedia.org/wiki/Home_directory)). Par exemple:
+    - **Sous windows (vista, 7, 8 et 10)** créer le fichier dans: ```<root>\Users\<username>\.vagrant.d```.
+    - **Sous linux (Ubuntu)** créer le fichier dans: ```/home/<username>/.vagrant.d```.
+
 
 - Ajouter la variable d'environnement du proxy dans le Bash qui servira à lancer le serveur:
   ```
-  http_proxy="http://192.168.x.xx:3128/"
+  http_proxy="http://<proxyhostorip>:<proxyport>"
   ```
   **Note**: Il est également possible de mettre la variable directement en dur dans le fichier de configuration si l'on travaille toujours derrière le même proxy (Évite d'avoir à remettre les variables à chaque lancement).
 
@@ -61,7 +72,7 @@ Vagrant est utilisé pour instancier la machine virtuelle.
     - **proxy-server** : pour indiquer l'adresse du proxyconf,
     - **proxy-bypass-list** : pour indiquer les adresses locales.
     ```
-    /usr/bin/google-chrome-stable %U --proxy-server="192.168.x.xx:3128" --proxy-bypass-list="127.0.0.1, localhost, *.dev.net"
+    /usr/bin/google-chrome-stable %U --proxy-server="<proxyhostorip>:<proxyport>" --proxy-bypass-list="127.0.0.1, localhost, *.dev.net"
     ```
 
 ### Ajout de la résolution de l'hôte en local
@@ -70,8 +81,8 @@ Vagrant est utilisé pour instancier la machine virtuelle.
   192.168.50.11 ancgis.dev.net
   ```
   **Note**:
-  - **Sous windows** éditer le fichier: C:\Windows\System32\drivers\etc\hosts,
-  - **Sous linux (Ubuntu)** éditer le fichier: /etc/hosts.
+  - **Sous windows** éditer le fichier: ```<root>\Windows\System32\drivers\etc\hosts```,
+  - **Sous linux (Ubuntu)** éditer le fichier: ```/etc/hosts```.
 
 ### Paramétrer une connexion SSH vers la VM en activant le X11 Forwarding (**Optionnel**)
 #### **Sous linux (Ubuntu)**
@@ -83,7 +94,7 @@ Vagrant est utilisé pour instancier la machine virtuelle.
     UserKnownHostsFile /dev/null
     StrictHostKeyChecking no
     PasswordAuthentication no
-    IdentityFile YOUR_INSTALL_PATH/vm4ancgis/.vagrant/machines/default/virtualbox/private_key
+    IdentityFile <installpath>/vm4ancgis/.vagrant/machines/default/virtualbox/private_key
     IdentitiesOnly yes
     LogLevel FATAL
     ForwardX11 yes
