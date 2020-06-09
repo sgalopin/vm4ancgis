@@ -160,9 +160,9 @@ Vagrant.configure("2") do |config|
   # Provision "populate-db"
   config.vm.provision "populate-db", type: "shell", privileged: false, inline: <<-SHELL
     # Make the .env file
-    cp /var/www/ancgis/sources/shell/.env.dist /var/www/ancgis/sources/shell/.env
+    cp /var/www/ancgis/sources/database/shell/.env.dist /var/www/ancgis/sources/database/shell/.env
     # Populate the database
-    cd /var/www/ancgis/sources/database/data && /bin/bash /var/www/ancgis/sources/shell/populate-db.sh
+    cd /var/www/ancgis/sources/database/data && /bin/bash /var/www/ancgis/sources/database/shell/populate-db.sh
   SHELL
 
   # The following provisions are only run when called explicitly

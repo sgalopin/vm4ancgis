@@ -139,7 +139,7 @@ cd /var/www/ancgis/sources/application && npm run start:dev
 Après la création de la VM, le projet contient deux fichiers **.env** qui permettent la définition de variables privées globales:
 
 - /var/www/ancgis/sources/application/.env
-- /var/www/ancgis/sources/shell/.env
+- /var/www/ancgis/sources/database/shell/.env
 
 **Note**: Dans un premier temps, il n'est pas nécessaire de les éditer.
 
