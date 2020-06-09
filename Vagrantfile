@@ -48,6 +48,7 @@ Vagrant.configure("2") do |config|
   # Disable the default root
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder "./ancgis", "/var/www/ancgis/sources", create: true, owner: "vagrant", group: "vagrant"
+  config.vm.synced_folder "./ancdb", "/var/www/ancdb/sources", create: true, owner: "vagrant", group: "vagrant"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
