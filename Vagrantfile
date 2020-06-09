@@ -115,8 +115,9 @@ Vagrant.configure("2") do |config|
     systemctl enable mongod.service
 
     # Sources
-    rm -rdf /var/www/ancgis/sources/* # Required in case of previous VM build
     apt-get install -y git
+    # AncGIS
+    rm -rdf /var/www/ancgis/sources/* # Required in case of previous VM build
     git clone -b develop https://github.com/sgalopin/ancgis.git /home/vagrant/ancgis # Sources can not be cloned directly into a synchronized folder
     mkdir -p /var/www/ancgis/sources
     cp -fa /home/vagrant/ancgis/. /var/www/ancgis/sources # -f option required in case of previous VM build
@@ -125,13 +126,23 @@ Vagrant.configure("2") do |config|
     # Solves permission issue
     chgrp -R vagrant /var/www/ancgis
     chmod -R g+w /var/www/ancgis
+    # AncDB
+    rm -rdf /var/www/ancdb/sources/* # Required in case of previous VM build
+    git clone -b develop https://github.com/sgalopin/ancdb.git /home/vagrant/ancdb # Sources can not be cloned directly into a synchronized folder
+    mkdir -p /var/www/ancdb/sources
+    cp -fa /home/vagrant/ancdb/. /var/www/ancdb/sources # -f option required in case of previous VM build
+    rm -rdf /home/vagrant/ancdb
+    echo 'PATH="$PATH:/var/www/ancdb/node_modules/.bin"' >> /home/vagrant/.profile # Required by the run scripts of package.json
+    # Solves permission issue
+    chgrp -R vagrant /var/www/ancdb
+    chmod -R g+w /var/www/ancdb
 
     # AdminMongo
     git clone https://github.com/mrvautin/adminMongo.git /var/www/adminMongo
     cd /var/www/adminMongo && npm install electron-prebuilt --unsafe-perm=true # Bugfix for the electron-prebuilt post-installation (required by AdminMongo)
     cd /var/www/adminMongo && npm install
-    cp /var/www/ancgis/sources/database/admin/config.json /var/www/adminMongo/config/config.json
-    cp /var/www/ancgis/sources/database/admin/app.json /var/www/adminMongo/config/app.json
+    cp /var/www/ancdb/sources/admin/config.json /var/www/adminMongo/config/config.json
+    cp /var/www/ancdb/sources/admin/app.json /var/www/adminMongo/config/app.json
     # Solves permission issue
     chgrp -R vagrant /var/www/adminMongo
     chmod -R g+w /var/www/adminMongo
@@ -146,23 +157,23 @@ Vagrant.configure("2") do |config|
   # Provision "npm-install"
   config.vm.provision "npm-install", type: "shell", privileged: false,  inline: <<-SHELL
     # Make the .env file
-    cp /var/www/ancgis/sources/application/.env.dist /var/www/ancgis/sources/application/.env
+    cp /var/www/ancgis/sources/.env.dist /var/www/ancgis/sources/.env
     # Install the node_modules outside of the synced folder
-    cp /var/www/ancgis/sources/application/package.json /var/www/ancgis
-    cp /var/www/ancgis/sources/application/package-lock.json /var/www/ancgis
+    cp /var/www/ancgis/sources/package.json /var/www/ancgis
+    cp /var/www/ancgis/sources/package-lock.json /var/www/ancgis
     cd /var/www/ancgis && npm install
     rm /var/www/ancgis/package.json
     rm /var/www/ancgis/package-lock.json
     # Build the package (node_modules/.bin must be into the PATH)
-    cd /var/www/ancgis/sources/application && npm run build
+    cd /var/www/ancgis/sources && npm run build
   SHELL
 
   # Provision "populate-db"
   config.vm.provision "populate-db", type: "shell", privileged: false, inline: <<-SHELL
     # Make the .env file
-    cp /var/www/ancgis/sources/database/shell/.env.dist /var/www/ancgis/sources/database/shell/.env
+    cp /var/www/ancdb/sources/shell/.env.dist /var/www/ancdb/sources/shell/.env
     # Populate the database
-    cd /var/www/ancgis/sources/database/data && /bin/bash /var/www/ancgis/sources/database/shell/populate-db.sh
+    cd /var/www/ancdb/sources/data && /bin/bash /var/www/ancdb/sources/shell/populate-db.sh
   SHELL
 
   # The following provisions are only run when called explicitly
@@ -171,7 +182,7 @@ Vagrant.configure("2") do |config|
     # Provision "launch-app"
     config.vm.provision "launch-app", type: "shell", privileged: false, inline: <<-SHELL
       # cd /var/www/ancgis/ && sudo DEBUG=app:* npm start
-      cd /var/www/ancgis/sources/application && npm run start:dev
+      cd /var/www/ancgis/sources && npm run start:dev
     SHELL
 
     # Provision "launch-dba"

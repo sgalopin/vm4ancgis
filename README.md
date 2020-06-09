@@ -131,15 +131,15 @@ ssh ancgis.dev.net
 ou avec PuTTY (sous windows avec X11 Forwarding).
 - Une fois la connexion établie, taper la commande suivante pour lancer le serveur:
 ```
-cd /var/www/ancgis/sources/application && npm run start:dev
+cd /var/www/ancgis/sources && npm run start:dev
 ```
 
 ### Modification des variables d'environnement du projet
 
 Après la création de la VM, le projet contient deux fichiers **.env** qui permettent la définition de variables privées globales:
 
-- /var/www/ancgis/sources/application/.env
-- /var/www/ancgis/sources/database/shell/.env
+- /var/www/ancgis/sources/.env
+- /var/www/ancdb/sources/shell/.env
 
 **Note**: Dans un premier temps, il n'est pas nécessaire de les éditer.
 
@@ -184,7 +184,7 @@ vagrant provision --provision-with install-devtools
 - Ouvrir une connexion ssh avec X11 Forwarding vers la VM,
 - Une fois la connexion établie, taper la commande suivante pour lancer Atom:
 ```
-cd /var/www/ancgis/sources/application && atom
+cd /var/www/ancgis/sources && atom
 ```
 
 **Note**: Si votre installation a été correctement faite, l'interface graphique d'Atom doit s'ouvrir (X11 Forwarding).
@@ -207,10 +207,10 @@ Afin d'éviter tout problème de maj du code, il est **indispensable** de désac
 - **$ vagrant provision --provision-with install-devtools**: Lance l'installation des outils de développements sur la VM.
 
 ### Commandes serveur (via console ssh)
-- **vagrant@ancgis:~$ cd /var/www/ancgis/sources/application && npm run start**: Lance (avec node) le serveur AVEC la possibilité de l'arrêter et de le redémarrer.
-- **vagrant@ancgis:~$ cd /var/www/ancgis/sources/application && npm run start:dev**: Idem ci-dessus mais lancement fait avec nodemon (Redémarrage automatique du serveur après modification des sources).
-- **vagrant@ancgis:~$ cd /var/www/ancgis/sources/application && npm test**: Lance une batterie de tests UI (puppeteer, mocha, chai).
-- **vagrant@ancgis:~$ cd /var/www/ancgis/sources/application && npm run build**: Lance la construction des bundles javascript.
+- **vagrant@ancgis:~$ cd /var/www/ancgis/sources && npm run start**: Lance (avec node) le serveur AVEC la possibilité de l'arrêter et de le redémarrer.
+- **vagrant@ancgis:~$ cd /var/www/ancgis/sources && npm run start:dev**: Idem ci-dessus mais lancement fait avec nodemon (Redémarrage automatique du serveur après modification des sources).
+- **vagrant@ancgis:~$ cd /var/www/ancgis/sources && npm test**: Lance une batterie de tests UI (puppeteer, mocha, chai).
+- **vagrant@ancgis:~$ cd /var/www/ancgis/sources && npm run build**: Lance la construction des bundles javascript.
 - **vagrant@ancgis:~$ cd /var/www/adminMongo && npm start**: Lance (avec node) le manager de base de données AVEC la possibilité de l'arrêter et de le redémarrer.
 
 ### PostMan
