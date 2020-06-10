@@ -157,6 +157,7 @@ Vagrant.configure("2") do |config|
 
   # Provision "npm-install"
   config.vm.provision "npm-install", type: "shell", privileged: false,  inline: <<-SHELL
+    # AncGIS
     # Make the .env file
     cp /var/www/ancgis/sources/.env.dist /var/www/ancgis/sources/.env
     # Install the node_modules outside of the synced folder
@@ -167,12 +168,20 @@ Vagrant.configure("2") do |config|
     rm /var/www/ancgis/package-lock.json
     # Build the package (node_modules/.bin must be into the PATH)
     cd /var/www/ancgis/sources && npm run build
+
+    # AncDB
+    # Make the .env file
+    cp /var/www/ancdb/sources/shell/.env.dist /var/www/ancdb/sources/shell/.env
+    # Install the node_modules outside of the synced folder
+    cp /var/www/ancdb/sources/package.json /var/www/ancdb
+    cp /var/www/ancdb/sources/package-lock.json /var/www/ancdb
+    cd /var/www/ancdb && npm install
+    rm /var/www/ancdb/package.json
+    rm /var/www/ancdb/package-lock.json
   SHELL
 
   # Provision "populate-db"
   config.vm.provision "populate-db", type: "shell", privileged: false, inline: <<-SHELL
-    # Make the .env file
-    cp /var/www/ancdb/sources/shell/.env.dist /var/www/ancdb/sources/shell/.env
     # Populate the database
     cd /var/www/ancdb/sources/data && /bin/bash /var/www/ancdb/sources/shell/populate-db.sh
   SHELL
