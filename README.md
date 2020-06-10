@@ -174,6 +174,15 @@ Les cartes IGN utilisées par le projet nécessitent la possession d'une clé de
 
 ## DÉVELOPPEMENT
 
+### Configurer les utilisateurs Git
+
+Dans chacun des répertoires "vm4ancgis", "ancgis" et "ancdb":
+- Après les avoir modifiées, lancer les commandes suivantes:
+```
+git config user.name "YourUserName"
+git config user.email "YourEmailAddress"
+```
+
 ### Lancer Atom (IDE) en X11 Forwarding
 
 Pour faciliter les développements l'éditeur Atom peut être installé sur la VM.
